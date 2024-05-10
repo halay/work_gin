@@ -9,22 +9,25 @@ import (
 	"os"
 	"time"
 	"work_gin/utils"
+	"work_gin/utils/log"
 )
 
 func Log() gin.HandlerFunc {
 	filePath := utils.LogPath + "log"
 	//linkName := "latest_log.log"
 
-	scr, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0755)
+	/*scr, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0755)
 	if err != nil {
 		fmt.Println("err:", err)
 	}
 	logger := logrus.New()
 
 	logger.Out = scr
-
-	logger.SetLevel(logrus.DebugLevel)
-
+	logger.SetFormatter(&logrus.JSONFormatter{
+		TimestampFormat: "2006-01-02 15:04:05",
+	})
+	logger.SetLevel(logrus.DebugLevel)*/
+	logger := log.Log
 	logWriter, _ := retalog.New(
 		filePath+"%Y%m%d.log",
 		retalog.WithMaxAge(7*24*time.Hour),
@@ -40,7 +43,7 @@ func Log() gin.HandlerFunc {
 		logrus.ErrorLevel: logWriter,
 		logrus.PanicLevel: logWriter,
 	}
-	Hook := lfshook.NewHook(writeMap, &logrus.TextFormatter{
+	Hook := lfshook.NewHook(writeMap, &logrus.JSONFormatter{
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
 

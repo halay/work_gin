@@ -5,9 +5,10 @@ import (
 	"work_gin/api/yto"
 	"work_gin/middleware"
 	"work_gin/utils"
+	"work_gin/utils/log"
 )
 
-func InitRouter() {
+func InitRouter() error {
 	gin.SetMode(utils.AppMode)
 	r := gin.New()
 	r.Use(middleware.Log())
@@ -24,6 +25,13 @@ func InitRouter() {
 		//router.GET("test/redis/hash", yto.RedisHash)
 		router.POST("audio/download", yto.DownloadMP3Handler)
 		//router.GET("rate/test", middleware.RateLimit(), yto.RateTest)
+		router.GET("asynq/test", yto.AsynqTest)
 	}
-	_ = r.Run(utils.HttpPort)
+	log.Log.Info("service start success....")
+	err := r.Run(utils.HttpPort)
+	if err != nil {
+		log.Log.Infof("service start err,%+v \n", err)
+		return err
+	}
+	return nil
 }
