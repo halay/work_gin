@@ -3,6 +3,8 @@ package utils
 import (
 	"flag"
 	"fmt"
+	"github.com/zeromicro/go-queue/kq"
+	"github.com/zeromicro/go-zero/core/service"
 	"gopkg.in/ini.v1"
 	"os"
 )
@@ -25,6 +27,8 @@ var (
 
 	Rate     int64
 	Capacity int64
+
+	KqConf kq.KqConf
 )
 
 func init() {
@@ -41,6 +45,7 @@ func init() {
 		LoadData(file)
 		LoadRedis(file)
 		LoadRateLimit(file)
+		LoadKq(file)
 	} else {
 		file, err := ini.Load("config/config.ini")
 		if err != nil {
@@ -51,6 +56,7 @@ func init() {
 		LoadData(file)
 		LoadRedis(file)
 		LoadRateLimit(file)
+		LoadKq(file)
 	}
 }
 
@@ -77,4 +83,16 @@ func LoadRedis(file *ini.File) {
 func LoadRateLimit(file *ini.File) {
 	Rate = file.Section("rate").Key("Rate").MustInt64(1)
 	Capacity = file.Section("rate").Key("Capacity").MustInt64()
+}
+func LoadKq(file *ini.File) {
+	KqConf = kq.KqConf{
+		ServiceConf: service.ServiceConf{
+			Name: file.Section("kq").Key("Name").MustString("kq-name"),
+		},
+		Brokers:   file.Section("kq").Key("Brokers").Strings(","),
+		Topic:     file.Section("kq").Key("Topic").MustString("test"),
+		Consumers: file.Section("kq").Key("Consumers").MustInt(8),
+		Group:     file.Section("kq").Key("Group").MustString("test"),
+		Offset:    file.Section("kq").Key("Offset").MustString("last"),
+	}
 }

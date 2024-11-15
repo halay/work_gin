@@ -14,19 +14,24 @@ func InitRouter() error {
 	r.Use(middleware.Log())
 	r.Use(gin.Recovery())
 	r.Use(middleware.Cors())
-	r.Use(middleware.RateLimit())
+	//r.Use(middleware.RateLimit())
 	/*
 		前端展示页面接口
 	*/
 	router := r.Group("api/yto")
 	{
 		//测试
+		router.GET("test/string", yto.HTest)
 		//router.GET("test/redis/string", yto.RedisString)
 		//router.GET("test/redis/hash", yto.RedisHash)
-		router.POST("audio/download", yto.DownloadMP3Handler)
+		//router.POST("audio/download", yto.DownloadMP3Handler)
 		//router.GET("rate/test", middleware.RateLimit(), yto.RateTest)
-		router.GET("asynq/test", yto.AsynqTest)
 	}
+	/*	mq := r.Group("api/mqueue")
+		mq.GET("asynq/push", asynq.AsynqTest)
+		mq.GET("goqueue/push", mqueue.Push)*/
+
+	//r.GET("ws", websocket.ServeWebSocket)
 	log.Log.Info("service start success....")
 	err := r.Run(utils.HttpPort)
 	if err != nil {

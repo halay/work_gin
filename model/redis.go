@@ -16,6 +16,10 @@ func InitRedis() {
 		Addr:     utils.RedisArr,
 		Password: utils.RedisPassword,
 		DB:       utils.RedisDb,
+		OnConnect: func(conn *redis.Conn) error {
+			fmt.Println("redis连接成功")
+			return nil
+		},
 	})
 	_, err := RedisDb.Ping().Result()
 	if err != nil {
